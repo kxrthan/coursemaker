@@ -6,6 +6,7 @@ export interface CourseFile {
   type: 'video' | 'material' | 'image' | 'other';
   completed: boolean;
   file: File;
+  subtitleFile?: File;
 }
 
 export interface CourseModule {

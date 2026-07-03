@@ -8,21 +8,23 @@ export const parseFilesToCourse = (files: FileList): Course | null => {
   const courseName = firstPathParts.length > 0 ? firstPathParts[0] : 'My Course';
 
   const modulesMap = new Map<string, CourseModule>();
+  const subtitlesMap = new Map<string, File>();
 
   Array.from(files).forEach((file, index) => {
-    // webkitRelativePath looks like "CourseName/Module 1/01-video.mp4"
     const pathParts = file.webkitRelativePath.split('/');
-    
-    // Skip if it's not nested enough or if it's a hidden file (e.g., .DS_Store)
     if (pathParts.length < 2 || file.name.startsWith('.')) return;
 
     let moduleName = 'Other';
-    // If path is "Course/Module/Lesson.mp4", module name is "Module"
-    // If it's deeper, like "Course/Section/Module/Lesson.mp4", we'll just group by the immediate parent folder.
     if (pathParts.length >= 3) {
       moduleName = pathParts[pathParts.length - 2];
     } else {
       moduleName = 'Root Content';
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext === 'vtt' || ext === 'srt') {
+      subtitlesMap.set(file.webkitRelativePath, file);
+      return;
     }
 
     const fileType = determineFileType(file.name, file.type);
@@ -54,6 +56,21 @@ export const parseFilesToCourse = (files: FileList): Course | null => {
     mod.files.push(courseFile);
     mod.totalFiles += 1;
   });
+
+  // Attach subtitles to matching videos
+  for (const mod of modulesMap.values()) {
+    for (const courseFile of mod.files) {
+      if (courseFile.type === 'video') {
+        const basePath = courseFile.path.replace(/\.[^/.]+$/, "");
+        for (const [subPath, subFile] of subtitlesMap.entries()) {
+          if (subPath.startsWith(basePath + '.')) {
+            courseFile.subtitleFile = subFile;
+            break;
+          }
+        }
+      }
+    }
+  }
 
   // Sort modules alphabetically
   const sortedModules = Array.from(modulesMap.values()).sort((a, b) => 

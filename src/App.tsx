@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LogOut, ArrowLeft, AlignRight } from 'lucide-react';
+import { LogOut, ArrowLeft, AlignRight, Bot, Settings } from 'lucide-react';
 import type { Course, CourseFile } from './types';
 import { parseFilesToCourse } from './utils/fileParser';
 import { saveDirectoryHandle, getDirectoryHandle, verifyPermission, readDirectoryAsFiles } from './utils/fileSystem';
@@ -11,6 +11,10 @@ import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { ErrorPage } from './components/ErrorPage';
 import { Dashboard } from './components/Dashboard';
+import { AITutorPanel } from './components/AITutorPanel';
+import { SettingsModal } from './components/SettingsModal';
+import { parseFileText } from './utils/aiClient';
+import { extractTextFromPdf } from './utils/pdfParser';
 import { useAuth } from './hooks/useAuth';
 import { supabase } from './lib/supabase';
 import './App.css';
@@ -34,6 +38,10 @@ function App() {
     type: 'success' | 'error' | 'warning';
   } | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [isAITutorOpen, setIsAITutorOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [contextText, setContextText] = useState<string>('');
+  const [contextImage, setContextImage] = useState<File | undefined>();
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -66,6 +74,24 @@ function App() {
       setCourses([]);
     }
   }, [user]);
+
+  useEffect(() => {
+    const active = courses.find(c => c.id === activeCourseId);
+    const currFile = active?.modules.flatMap(m => m.files).find(f => f.id === currentFileId);
+    
+    setContextText('');
+    setContextImage(undefined);
+
+    if (!currFile) return;
+
+    if (currFile.type === 'video' && currFile.subtitleFile) {
+      parseFileText(currFile.subtitleFile).then(setContextText).catch(console.error);
+    } else if (currFile.type === 'material' && currFile.path.toLowerCase().endsWith('.pdf')) {
+      extractTextFromPdf(currFile.file).then(text => setContextText(text.substring(0, 15000))).catch(console.error);
+    } else if (currFile.type === 'image') {
+      setContextImage(currFile.file);
+    }
+  }, [courses, activeCourseId, currentFileId]);
 
   // Helper to save a single course to Supabase
   const saveCourseToSupabase = async (courseToSave: Course) => {
@@ -129,7 +155,8 @@ function App() {
               return {
                 ...file,
                 file: newFile?.file || file.file,
-                url: newFile?.url || file.url
+                url: newFile?.url || file.url,
+                subtitleFile: newFile?.subtitleFile || file.subtitleFile
               };
             })
           };
@@ -473,25 +500,34 @@ function App() {
     <div className="app-container" style={{ flexDirection: 'row' }}>
       
       {/* LEFT SIDE: Main Content (Video Player) */}
-      <div className="main-content">
-        <header className="header" style={{ padding: '0 24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button className="btn btn-secondary" onClick={() => setActiveCourseId(null)} style={{ padding: '8px', border: 'none' }}>
+      <div className="main-content" style={{ minWidth: 0 }}>
+        <header className="header" style={{ padding: '0 24px', flexWrap: 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
+            <button className="btn btn-secondary" onClick={() => setActiveCourseId(null)} style={{ padding: '8px', border: 'none', flexShrink: 0 }}>
               <ArrowLeft size={20} />
             </button>
-            <h1 style={{ margin: 0 }}>{activeCourse.name}</h1>
+            <h1 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '1.1rem', paddingRight: '16px' }} title={activeCourse.name}>
+              {activeCourse.name}
+            </h1>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '200px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '150px' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{progressPercentage}%</span>
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
               </div>
             </div>
+            <button className="btn btn-secondary" onClick={() => setIsAITutorOpen(!isAITutorOpen)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+              <Bot size={16} />
+              AI Tutor
+            </button>
             <button className="btn btn-secondary" onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
               <AlignRight size={16} />
               {isSidebarOpen ? 'Hide' : 'Show'} Content
+            </button>
+            <button className="btn btn-secondary" onClick={() => setIsSettingsOpen(true)} style={{ padding: '8px', border: 'none', background: 'transparent' }}>
+              <Settings size={20} />
             </button>
           </div>
         </header>
@@ -502,6 +538,7 @@ function App() {
             onComplete={handleComplete}
             onNext={handleNext}
             onPrevious={handlePrevious}
+            onOpenSettings={() => setIsSettingsOpen(true)}
           />
         ) : (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -515,10 +552,24 @@ function App() {
         course={activeCourse} 
         currentFileId={currentFileId} 
         isOpen={isSidebarOpen}
-        onSelectFile={(f) => setCurrentFileId(f.id)}
+        onSelectFile={(file) => setCurrentFileId(file.id)}
         onToggleComplete={handleComplete}
       />
       
+      {/* AI TUTOR PANEL */}
+      <AITutorPanel 
+        isOpen={isAITutorOpen}
+        onClose={() => setIsAITutorOpen(false)}
+        contextTitle={currentFile?.name || activeCourse.name}
+        contextText={contextText}
+        contextImage={contextImage}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
+
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </div>
   );
 }

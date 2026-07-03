@@ -1,15 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import type { CourseFile } from '../types';
 import { CheckCircle, Circle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { QuizGenerator } from './QuizGenerator';
 
 interface VideoPlayerProps {
   file: CourseFile;
   onComplete: (fileId: string) => void;
   onNext: () => void;
   onPrevious?: () => void;
+  onOpenSettings?: () => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNext, onPrevious }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNext, onPrevious, onOpenSettings }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -30,19 +32,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px' }}>
         <h2 style={{ 
-          fontSize: '1.1rem', 
+          fontSize: '0.95rem', 
           fontWeight: 600,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          marginRight: '16px',
-          flex: 1
+          flex: 1,
+          margin: 0
         }} title={file.name}>
-          {file.name.length > 70 ? `${file.name.substring(0, 70)}...` : file.name}
+          {file.name}
         </h2>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
+          {file.path.toLowerCase().endsWith('.pdf') && onOpenSettings && (
+            <QuizGenerator file={file.file} onOpenSettings={onOpenSettings} />
+          )}
+
           {onPrevious && (
             <button 
               className="btn btn-primary"
@@ -50,11 +56,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
               style={{ 
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
+                gap: '4px',
+                padding: '6px 12px',
+                fontSize: '0.85rem'
               }}
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={16} />
               Previous
             </button>
           )}
@@ -65,12 +72,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
             style={{ 
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
+              gap: '4px',
+              padding: '6px 12px',
+              fontSize: '0.85rem'
             }}
           >
             Next
-            <ArrowRight size={18} />
+            <ArrowRight size={16} />
           </button>
           
           <button 
@@ -79,11 +87,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
             style={{ 
               backgroundColor: file.completed ? 'var(--success-color)' : 'transparent',
               borderColor: file.completed ? 'var(--success-color)' : 'var(--border-color)',
-              color: file.completed ? '#fff' : 'var(--text-primary)'
+              color: file.completed ? '#fff' : 'var(--text-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              fontSize: '0.85rem'
             }}
           >
-            {file.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
-            {file.completed ? 'Completed' : 'Mark as Complete'}
+            {file.completed ? <CheckCircle size={16} /> : <Circle size={16} />}
+            {file.completed ? 'Completed' : 'Mark Complete'}
           </button>
         </div>
       </div>
