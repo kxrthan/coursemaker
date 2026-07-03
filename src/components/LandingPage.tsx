@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, ArrowUpRight, FolderDown, PlayCircle, ShieldCheck, Plus, Minus, User, Zap } from 'lucide-react';
+import { ArrowUpRight, Plus, Minus, User, Zap } from 'lucide-react';
 
 interface LandingPageProps {
   onStart: () => void;

@@ -10,7 +10,7 @@ interface DashboardProps {
   onLogout: () => void;
   onAddCourseFiles: (files: File[] | FileList, handle?: any) => void;
   onGoHome: () => void;
-  onUpdateUsername: (newUsername: string) => Promise<{ error: any }>;
+  onUpdateUsername: (newUsername: string) => Promise<any>;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ username, courses, onSelectCourse, onDeleteCourse, onLogout, onAddCourseFiles, onGoHome, onUpdateUsername }) => {

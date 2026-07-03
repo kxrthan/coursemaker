@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { LogOut, ArrowLeft, AlignRight, Bot, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, AlignRight, Bot, Settings } from 'lucide-react';
 import type { Course, CourseFile } from './types';
 import { parseFilesToCourse } from './utils/fileParser';
 import { saveDirectoryHandle, getDirectoryHandle, verifyPermission, readDirectoryAsFiles } from './utils/fileSystem';

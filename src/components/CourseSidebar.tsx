@@ -50,7 +50,6 @@ const ModuleAccordion: React.FC<ModuleAccordionProps> = ({ module, currentFileId
   const [isOpen, setIsOpen] = useState(true);
 
   // Determine if any file in this module is currently active
-  const hasActiveFile = module.files.some(f => f.id === currentFileId);
   const completedCount = module.files.filter(f => f.completed).length;
 
   return (
