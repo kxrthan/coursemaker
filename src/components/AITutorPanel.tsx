@@ -79,8 +79,7 @@ Conversation History:\n${historyContext}`;
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      width: '350px',
+    <div className="ai-tutor-panel" style={{
       flexShrink: 0,
       backgroundColor: 'var(--bg-secondary)',
       borderLeft: '1px solid var(--border-color)',

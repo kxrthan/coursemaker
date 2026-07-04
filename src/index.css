@@ -319,6 +319,10 @@ video {
   min-height: 85vh;
 }
 
+.ai-tutor-panel {
+  width: 350px;
+}
+
 /* Dashboard Styles */
 .dashboard-main {
   max-width: 1200px;
@@ -461,6 +465,12 @@ input[type="file"] {
   }
   .pdf-iframe {
     min-height: 85vh;
+  }
+  .ai-tutor-panel {
+    width: 100% !important;
+    border-left: none !important;
+    border-top: 1px solid var(--border-color) !important;
+    height: 60vh !important;
   }
 }
 
