@@ -31,20 +31,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
   };
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px' }}>
-        <h2 style={{ 
-          fontSize: '0.95rem', 
-          fontWeight: 600,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          flex: 1,
-          margin: 0
-        }} title={file.name}>
+    <div className="video-player-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
+      <div className="video-player-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px' }}>
+        <h2 className="video-player-title" title={file.name}>
           {file.name}
         </h2>
-        <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
+        <div className="video-player-actions" style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
           {file.path.toLowerCase().endsWith('.pdf') && onOpenSettings && (
             <QuizGenerator file={file.file} onOpenSettings={onOpenSettings} />
           )}
@@ -114,11 +106,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ file, onComplete, onNe
           </video>
         </div>
       ) : file.type === 'material' ? (
-        <div className="glass-panel animate-fade-in" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="pdf-container glass-panel animate-fade-in">
           <iframe 
             src={file.url} 
             title={file.name}
-            style={{ width: '100%', height: '100%', border: 'none', borderRadius: '8px', minHeight: '600px' }}
+            className="pdf-iframe"
           />
         </div>
       ) : file.type === 'image' ? (

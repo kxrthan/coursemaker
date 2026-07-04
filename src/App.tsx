@@ -497,21 +497,21 @@ function App() {
     .find(f => f.id === currentFileId);
 
   return (
-    <div className="app-container" style={{ flexDirection: 'row' }}>
+    <div className="app-container">
       
       {/* LEFT SIDE: Main Content (Video Player) */}
       <div className="main-content" style={{ minWidth: 0 }}>
-        <header className="header" style={{ padding: '0 24px', flexWrap: 'nowrap' }}>
+        <header className="header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
             <button className="btn btn-secondary" onClick={() => setActiveCourseId(null)} style={{ padding: '8px', border: 'none', flexShrink: 0 }}>
               <ArrowLeft size={20} />
             </button>
-            <h1 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '1.1rem', paddingRight: '16px' }} title={activeCourse.name}>
+            <h1 className="app-header-title" title={activeCourse.name}>
               {activeCourse.name}
             </h1>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '150px' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{progressPercentage}%</span>
               <div className="progress-container">

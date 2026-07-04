@@ -12,15 +12,7 @@ interface CourseSidebarProps {
 
 export const CourseSidebar: React.FC<CourseSidebarProps> = ({ course, currentFileId, isOpen, onSelectFile, onToggleComplete }) => {
   return (
-    <div 
-      className="sidebar" 
-      style={{ 
-        width: isOpen ? 'var(--sidebar-width)' : '0px',
-        opacity: isOpen ? 1 : 0,
-        overflow: 'hidden',
-        borderLeftWidth: isOpen ? '1px' : '0px'
-      }}
-    >
+    <div className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', minWidth: 'var(--sidebar-width)' }}>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>{course.name}</h2>
       </div>
@@ -90,8 +82,8 @@ const ModuleAccordion: React.FC<ModuleAccordionProps> = ({ module, currentFileId
                 
                 {file.type === 'video' ? <PlayCircle size={16} /> : file.type === 'image' ? <Image size={16} /> : <FileText size={16} />}
                 
-                <span style={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.75rem' }} title={file.name}>
-                  {file.name.length > 70 ? `${file.name.substring(0, 70)}...` : file.name}
+                <span className="sidebar-lesson-title" title={file.name}>
+                  {file.name}
                 </span>
               </div>
             );

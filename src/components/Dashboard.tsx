@@ -83,7 +83,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ username, courses, onSelec
           <Zap size={24} fill="var(--accent-color)" style={{ color: 'var(--accent-color)', filter: 'drop-shadow(0 0 8px var(--accent-color))' }} />
           <span className="logo-text">COURSEMAKER.</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div className="dashboard-user-actions">
           {isEditingUsername ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <User size={16} style={{ color: 'var(--text-secondary)' }} />
@@ -135,10 +135,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ username, courses, onSelec
         </div>
       </header>
 
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
+      <main className="dashboard-main">
+        <div className="dashboard-top">
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', marginBottom: '8px' }}>Your Dashboard</h1>
+            <h1 className="dashboard-title">Your Dashboard</h1>
           </div>
           
           <button className="btn btn-primary" onClick={handleAddCourseClick}>

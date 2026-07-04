@@ -74,7 +74,7 @@
 .hero-section {
   text-align: center;
   max-width: 900px;
-  margin: 100px auto 160px;
+  margin: 40px auto 160px;
   padding: 0 24px;
 }
 
@@ -287,3 +287,104 @@
 .delay-2 { animation-delay: 0.2s; }
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
+
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-nav-dropdown {
+  display: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .landing-header {
+    padding: 0 16px;
+  }
+  .header-nav {
+    display: none;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .mobile-nav-dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px;
+    gap: 16px;
+    z-index: 40;
+  }
+  .mobile-nav-dropdown a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .logo-text {
+    font-size: 1.1rem;
+  }
+  .hero-section {
+    margin: 40px auto 80px;
+    padding: 0 16px;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+  .about-section {
+    flex-direction: column;
+    gap: 40px;
+    margin: 0 auto 80px;
+    padding: 0 16px;
+  }
+  .about-content {
+    padding-left: 16px;
+  }
+  .about-content h2 {
+    font-size: 2.2rem;
+  }
+  .about-visual {
+    width: 100%;
+  }
+  .about-card {
+    padding: 24px;
+  }
+  .features-section {
+    margin: 0 auto 80px;
+    padding: 0 16px;
+  }
+  .features-header h2 {
+    font-size: 2.2rem;
+  }
+  .faq-section {
+    margin: 0 auto 80px !important;
+    padding: 0 16px !important;
+  }
+  .faq-item button {
+    font-size: 1.1rem !important;
+    padding: 16px !important;
+  }
+  .footer-section {
+    padding: 40px 16px;
+  }
+  .footer-content {
+    flex-direction: column;
+    gap: 32px;
+    padding-left: 16px;
+  }
+  .footer-col {
+    max-width: 100% !important;
+  }
+}

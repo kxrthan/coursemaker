@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowUpRight, Plus, Minus, User, Zap } from 'lucide-react';
+import { ArrowUpRight, Plus, Minus, User, Zap, Menu, X } from 'lucide-react';
 
 interface LandingPageProps {
   onStart: () => void;
@@ -33,6 +33,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart, isLoggedIn, u
 
   const [openFaq, setOpenFaq] = useState<number | 0>(0);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,73 +63,92 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart, isLoggedIn, u
           <a href="#faq" className="nav-link" onClick={(e) => { e.preventDefault(); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }}>FAQ</a>
         </nav>
         
-        {isLoggedIn ? (
-          <div ref={dropdownRef} style={{ position: 'relative' }}>
-            <button 
-              className="btn btn-secondary" 
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', border: '1px solid var(--border-color)', background: 'transparent' }}
-            >
-              <User size={16} />
-              <span style={{ fontWeight: 600 }}>{username}</span>
+        <div className="header-actions-right">
+          {isLoggedIn ? (
+            <div ref={dropdownRef} style={{ position: 'relative' }}>
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', border: '1px solid var(--border-color)', background: 'transparent' }}
+              >
+                <User size={16} />
+                <span style={{ fontWeight: 600 }}>{username}</span>
+              </button>
+              {showDropdown && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '8px',
+                  background: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '8px',
+                  padding: '8px 0',
+                  minWidth: '150px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                  zIndex: 100
+                }}>
+                  <button 
+                    onClick={onDashboardClick}
+                    style={{
+                      width: '100%',
+                      padding: '8px 16px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-primary)',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    Dashboard
+                  </button>
+                  <button 
+                    onClick={onLogout}
+                    style={{
+                      width: '100%',
+                      padding: '8px 16px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#ff4444',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,68,68,0.1)'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="btn btn-primary" onClick={onStart}>
+              Explore now
             </button>
-            {showDropdown && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                right: 0,
-                marginTop: '8px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '8px',
-                padding: '8px 0',
-                minWidth: '150px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                zIndex: 100
-              }}>
-                <button 
-                  onClick={onDashboardClick}
-                  style={{
-                    width: '100%',
-                    padding: '8px 16px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-primary)',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                  Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{
-                    width: '100%',
-                    padding: '8px 16px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#ff4444',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,68,68,0.1)'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button className="btn btn-primary" onClick={onStart}>
-            Explore now
+          )}
+
+          <button 
+            className="mobile-menu-btn btn-secondary" 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            style={{ padding: '8px', border: 'none', background: 'transparent', display: 'none' }}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-        )}
+        </div>
       </header>
+
+      {isMobileMenuOpen && (
+        <div className="mobile-nav-dropdown">
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); setIsMobileMenuOpen(false); }}>Home</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); setIsMobileMenuOpen(false); }}>About</a>
+          <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); setIsMobileMenuOpen(false); }}>FAQ</a>
+          <a href="#features" onClick={(e) => { e.preventDefault(); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); setIsMobileMenuOpen(false); }}>Features</a>
+        </div>
+      )}
 
       <main className="landing-main">
         {/* Hero Section */}
